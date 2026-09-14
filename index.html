@@ -126,7 +126,7 @@
                 <input type="number" id="montoNegociado" placeholder="Dejar vacío si aplica cálculo teórico" step="0.01">
             </div>
             <div class="form-group">
-                <label for="propietario">Nombre del Propietario:</label>
+                <label for="propietario">Nombre de Propietario:</label>
                 <input type="text" id="propietario" placeholder="Ej. Juan Pérez">
             </div>
         </div>
@@ -134,8 +134,9 @@
         <button class="no-print" onclick="calcularLiquidacion()">Calcular Valorización de Servidumbre</button>
 
         <div class="result" id="resultado" style="display:none;">
-            <h3 id="resTitulo">Resultado de Liquidación</h3>
+            <h3 id="resTitulo">Presupuesto</h3>
             <p><span>Nombre de Enlace:</span> <span id="resEnlace" style="font-weight: 600;">-</span></p>
+            <p><span>Nombre de Propietario:</span> <span id="resPropietario" style="font-weight: 600;">-</span></p>
             <p><span>Departamento Seleccionado:</span> <span id="resDep" style="font-weight: 600;">-</span></p>
             <p><span>Costo Postes:</span> <span>S/. <span id="resPostes">0.00</span></span></p>
             <p><span>Costo Cableado:</span> <span>S/. <span id="resCableado">0.00</span></span></p>
@@ -228,8 +229,9 @@ function calcularLiquidacion() {
         aplicaMinimo = "Acuerdo Negociado";
     }
 
-    document.getElementById('resTitulo').innerText = propietario ? `Liquidación de Servidumbre - Propietario: ${propietario}` : "Resultado de Liquidación";
+    document.getElementById('resTitulo').innerText = propietario ? `Presupuesto - Propietario: ${propietario}` : "Presupuesto";
     document.getElementById('resEnlace').innerText = nombreEnlace !== "" ? nombreEnlace : "No especificado";
+    document.getElementById('resPropietario').innerText = propietario !== "" ? propietario : "No especificado";
     document.getElementById('resDep').innerText = dep;
     document.getElementById('resPostes').innerText = formatoMoneda(subPostes);
     document.getElementById('resCableado').innerText = formatoMoneda(subCableado);
