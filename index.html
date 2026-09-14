@@ -38,7 +38,7 @@
             .header h2 { font-size: 18px; }
         }
 
-        /* Estilos específicos para cuando se imprima o guarde como PDF */
+        /* Estilos para impresión y guardado en PDF */
         @media print {
             body { background: #fff; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
@@ -137,10 +137,10 @@
             <p><span>Costo Retenidas:</span> <span>S/. <span id="resRetenida">0.00</span></span></p>
             <p><span>Costo Pozos a Tierra:</span> <span>S/. <span id="resPozos">0.00</span></span></p>
             <p><span>Total Teórico Calculado:</span> <span>S/. <span id="resTotalTeorico">0.00</span></span></p>
-            <p><span>Aplicación de Mínimo Legal (S/. 200):</span> <span id="resMinimoAplicado">No requerido</span></p>
+            <p><span>Aplicación de Mínimo Legal (S/. 200.00):</span> <span id="resMinimoAplicado">No requerido</span></p>
             <p class="total-row"><span>Monto Final a Pagar:</span> <span>S/. <span id="resFinal">0.00</span></span></p>
 
-            <!-- Botón de impresión dentro del resultado -->
+            <!-- Botón de impresión -->
             <button class="btn-print" onclick="window.print()">🖨️ Descargar / Imprimir Versión en PDF</button>
         </div>
     </div>
@@ -165,7 +165,6 @@ const tarifas = {
     "Apurimac": { poste: 200, cable: 2.624, retenida: 48.63, pozo: 100 },
     "Lima": { poste: 400, cable: 0.50, retenida: 13.75, pozo: 100 },
     "Callao": { poste: 400, cable: 0.50, retenida: 60.00, pozo: 100 },
-    "Ancash": {fte: 300, cable: 2.952, retenida: 23.08, pozo: 100 }, // corregido abajo
     "Ancash": { poste: 300, cable: 2.952, retenida: 23.08, pozo: 100 },
     "Arequipa": { poste: 400, cable: 1.50, retenida: 55.00, pozo: 100 },
     "Ica": { poste: 300, cable: 3.365, retenida: 28.13, pozo: 100 },
@@ -176,14 +175,19 @@ const tarifas = {
     "Piura": { poste: 450, cable: 5.384, retenida: 80.00, pozo: 100 }
 };
 
+// Función auxiliar para formatear montos con separador de miles y 2 decimales exactos
+function formatoMoneda(valor) {
+    return Number(valor).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 function actualizarInfoTarifas() {
     const dep = document.getElementById('departamento').value;
     const t = tarifas[dep];
     document.getElementById('infoTarifas').innerHTML = `Valores Unitarios para <b>${dep}</b>: 
-        Poste: <span>S/. ${t.poste.toFixed(2)}</span> | 
-        Cable (ml): <span>S/. ${t.cable.toFixed(3)}</span> | 
-        Retenida: <span>S/. ${t.retenida.toFixed(2)}</span> | 
-        Pozo a Tierra: <span>S/. ${t.pozo.toFixed(2)}</span>`;
+        Poste: <span>S/. ${formatoMoneda(t.poste)}</span> | 
+        Cable (ml): <span>S/. ${formatoMoneda(t.cable)}</span> | 
+        Retenida: <span>S/. ${formatoMoneda(t.retenida)}</span> | 
+        Pozo a Tierra: <span>S/. ${formatoMoneda(t.pozo)}</span>`;
 }
 
 window.onload = actualizarInfoTarifas;
@@ -220,13 +224,13 @@ function calcularLiquidacion() {
 
     document.getElementById('resTitulo').innerText = propietario ? `Liquidación de Servidumbre - Propietario: ${propietario}` : "Resultado de Liquidación";
     document.getElementById('resDep').innerText = dep;
-    document.getElementById('resPostes').innerText = subPostes.toFixed(3);
-    document.getElementById('resCableado').innerText = subCableado.toFixed(3);
-    document.getElementById('resRetenida').innerText = subRetenida.toFixed(3);
-    document.getElementById('resPozos').innerText = subPozos.toFixed(3);
-    document.getElementById('resTotalTeorico').innerText = (subPostes + subCableado + subRetenida + subPozos).toFixed(3);
+    document.getElementById('resPostes').innerText = formatoMoneda(subPostes);
+    document.getElementById('resCableado').innerText = formatoMoneda(subCableado);
+    document.getElementById('resRetenida').innerText = formatoMoneda(subRetenida);
+    document.getElementById('resPozos').innerText = formatoMoneda(subPozos);
+    document.getElementById('resTotalTeorico').innerText = formatoMoneda(subPostes + subCableado + subRetenida + subPozos);
     document.getElementById('resMinimoAplicado').innerText = aplicaMinimo;
-    document.getElementById('resFinal').innerText = montoFinal.toFixed(3);
+    document.getElementById('resFinal').innerText = formatoMoneda(montoFinal);
 
     document.getElementById('resultado').style.display = 'block';
 }
