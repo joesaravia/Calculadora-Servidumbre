@@ -134,7 +134,7 @@
         <button class="no-print" onclick="calcularLiquidacion()">Calcular Valorización de Servidumbre</button>
 
         <div class="result" id="resultado" style="display:none;">
-            <h3 id="resTitulo">Presupuesto</h3>
+            <h3 id="resTitulo">Presupuesto de Servidumbre</h3>
             <p><span>Nombre de Enlace:</span> <span id="resEnlace" style="font-weight: 600;">-</span></p>
             <p><span>Nombre de Propietario:</span> <span id="resPropietario" style="font-weight: 600;">-</span></p>
             <p><span>Departamento Seleccionado:</span> <span id="resDep" style="font-weight: 600;">-</span></p>
@@ -229,7 +229,7 @@ function calcularLiquidacion() {
         aplicaMinimo = "Acuerdo Negociado";
     }
 
-    document.getElementById('resTitulo').innerText = propietario ? `Presupuesto - Propietario: ${propietario}` : "Presupuesto";
+    document.getElementById('resTitulo').innerText = nombreEnlace ? `Presupuesto de Servidumbre - Proyecto: ${nombreEnlace}` : "Presupuesto de Servidumbre";
     document.getElementById('resEnlace').innerText = nombreEnlace !== "" ? nombreEnlace : "No especificado";
     document.getElementById('resPropietario').innerText = propietario !== "" ? propietario : "No especificado";
     document.getElementById('resDep').innerText = dep;
