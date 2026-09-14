@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Pago de Servidumbre - Entel Permisos Pext</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; background: #fff; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }
+        
+        /* Cabecera con logo */
+        .header { background-color: #004080; color: white; padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+        .header h2 { margin: 0; font-size: 22px; text-align: center; flex-grow: 1; }
+        .header img { height: 60px; width: 60px; border-radius: 50%; object-fit: cover; background: white; padding: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        .content-body { padding: 30px; }
+        .section-title { font-size: 16px; font-weight: bold; color: #0056b3; border-bottom: 2px solid #e9ecef; padding-bottom: 5px; margin-top: 20px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        input, select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .tarifa-box { background: #e8f4fd; border: 1px solid #b8daff; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; color: #004085; }
+        .tarifa-box span { font-weight: bold; }
+        button { background-color: #0056b3; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: background 0.2s; }
+        button:hover { background-color: #004085; }
+        .result { margin-top: 25px; background: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; }
+        .result h3 { margin: 0 0 15px 0; color: #333; font-size: 18px; border-bottom: 1px solid #ddd; padding-bottom: 8px; }
+        .result p { margin: 8px 0; font-size: 15px; display: flex; justify-content: space-between; }
+        .result p.total-row { font-size: 17px; font-weight: bold; color: #004080; border-top: 2px solid #ccc; padding-top: 10px; margin-top: 10px; }
+
+        @media (max-width: 600px) {
+            .header { flex-direction: column; gap: 10px; text-align: center; }
+            .header h2 { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Cabecera con Título y Logo -->
+    <div class="header">
+        <div style="width: 60px; display: none;"></div> <!-- Spacer para balancear flex en desktop -->
+        <h2>Calculadora de Pago de Servidumbre</h2>
+        <img src="logo.png" alt="Logo Entel Permisos Pext" onerror="this.style.display='none'">
+    </div>
+
+    <div class="content-body">
+        <div class="form-group">
+            <label for="departamento">Seleccione el Departamento (Cuadro Estadístico):</label>
+            <select id="departamento" onchange="actualizarInfoTarifas()">
+                <option value="Pasco">Pasco</option>
+                <option value="Ayacucho">Ayacucho</option>
+                <option value="Huánuco">Huánuco</option>
+                <option value="Tacna">Tacna</option>
+                <option value="Huancavelica">Huancavelica</option>
+                <option value="San Martin">San Martín</option>
+                <option value="Junín">Junín</option>
+                <option value="Moquegua">Moquegua</option>
+                <option value="Ucayali">Ucayali</option>
+                <option value="Lambayeque">Lambayeque</option>
+                <option value="Tumbes">Tumbes</option>
+                <option value="Loreto">Loreto</option>
+                <option value="Puno">Puno</option>
+                <option value="Madre de Dios">Madre de Dios</option>
+                <option value="Apurimac">Apurímac</option>
+                <option value="Lima">Lima</option>
+                <option value="Callao">Callao</option>
+                <option value="Ancash">Áncash</option>
+                <option value="Arequipa">Arequipa</option>
+                <option value="Ica">Ica</option>
+                <option value="La Libertad">La Libertad</option>
+                <option value="Cuzco" selected>Cuzco</option>
+                <option value="Amazonas">Amazonas</option>
+                <option value="Cajamarca">Cajamarca</option>
+                <option value="Piura">Piura</option>
+            </select>
+        </div>
+
+        <div class="tarifa-box" id="infoTarifas">
+            <!-- Se llena dinámicamente -->
+        </div>
+
+        <div class="section-title">Metrados / Afectación en el Predio</div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label for="postes">Cantidad de Postes:</label>
+                <input type="number" id="postes" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label for="cableado">Cableado (Metros Lineales ml):</label>
+                <input type="number" id="cableado" value="0" step="0.01" min="0">
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label for="retenida">Anclas o Retenidas:</label>
+                <input type="number" id="retenida" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label for="pozos">Pozos a Tierra:</label>
+                <input type="number" id="pozos" value="0" min="0">
+            </div>
+        </div>
+
+        <div class="section-title">Datos de Negociación y Predio</div>
+        <div class="grid-2">
+            <div class="form-group">
+                <label for="montoNegociado">Monto Negociado (Opcional S/.):</label>
+                <input type="number" id="montoNegociado" placeholder="Dejar vacío si aplica cálculo teórico" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="propietario">Nombre del Propietario:</label>
+                <input type="text" id="propietario" placeholder="Ej. Juan Pérez">
+            </div>
+        </div>
+
+        <button onclick="calcularLiquidacion()">Calcular Valorización de Servidumbre</button>
+
+        <div class="result" id="resultado" style="display:none;">
+            <h3 id="resTitulo">Resultado de Liquidación</h3>
+            <p><span>Costo Postes:</span> <span>S/. <span id="resPostes">0.00</span></span></p>
+            <p><span>Costo Cableado:</span> <span>S/. <span id="resCableado">0.00</span></span></p>
+            <p><span>Costo Retenidas:</span> <span>S/. <span id="resRetenida">0.00</span></span></p>
+            <p><span>Costo Pozos a Tierra:</span> <span>S/. <span id="resPozos">0.00</span></span></p>
+            <p><span>Total Teórico Calculado:</span> <span>S/. <span id="resTotalTeorico">0.00</span></span></p>
+            <p><span>Aplicación de Mínimo Legal (S/. 200):</span> <span id="resMinimoAplicado">No requerido</span></p>
+            <p class="total-row"><span>Monto Final a Pagar:</span> <span>S/. <span id="resFinal">0.00</span></span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+const tarifas = {
+    "Pasco": { poste: 200, cable: 0.24, retenida: 66.25, pozo: 100 },
+    "Ayacucho": { poste: 200, cable: 0.75, retenida: 17.06, pozo: 100 },
+    "Huánuco": { poste: 200, cable: 0.80, retenida: 18.00, pozo: 100 },
+    "Tacna": { poste: 200, cable: 0.80, retenida: 25.63, pozo: 100 },
+    "Huancavelica": { poste: 200, cable: 1.00, retenida: 35.00, pozo: 100 },
+    "San Martin": { poste: 200, cable: 1.05, retenida: 25.94, pozo: 100 },
+    "Junín": { poste: 300, cable: 0.52, retenida: 18.36, pozo: 100 },
+    "Moquegua": { poste: 200, cable: 1.89, retenida: 13.17, pozo: 100 },
+    "Ucayali": { poste: 200, cable: 2.20, retenida: 25.00, pozo: 100 },
+    "Lambayeque": { poste: 300, cable: 0.90, retenida: 24.38, pozo: 100 },
+    "Tumbes": { poste: 200, cable: 2.20, retenida: 55.00, pozo: 100 },
+    "Loreto": { poste: 250, cable: 1.70, retenida: 25.00, pozo: 100 },
+    "Puno": { poste: 250, cable: 1.69, retenida: 28.00, pozo: 100 },
+    "Madre de Dios": { poste: 250, cable: 1.70, retenida: 35.00, pozo: 100 },
+    "Apurimac": { poste: 200, cable: 2.624, retenida: 48.63, pozo: 100 },
+    "Lima": { poste: 400, cable: 0.50, retenida: 13.75, pozo: 100 },
+    "Callao": { poste: 400, cable: 0.50, retenida: 60.00, pozo: 100 },
+    "Ancash": { poste: 300, cable: 2.952, retenida: 23.08, pozo: 100 },
+    "Arequipa": { poste: 400, cable: 1.50, retenida: 55.00, pozo: 100 },
+    "Ica": { poste: 300, cable: 3.365, retenida: 28.13, pozo: 100 },
+    "La Libertad": { poste: 300, cable: 3.69, retenida: 32.08, pozo: 100 },
+    "Cuzco": { poste: 450, cable: 1.76, retenida: 37.65, pozo: 100 },
+    "Amazonas": { poste: 350, cable: 3.264, retenida: 73.00, pozo: 100 },
+    "Cajamarca": { poste: 450, cable: 5.16, retenida: 42.41, pozo: 100 },
+    "Piura": { poste: 450, cable: 5.384, retenida: 80.00, pozo: 100 }
+};
+
+function actualizarInfoTarifas() {
+    const dep = document.getElementById('departamento').value;
+    const t = tarifas[dep];
+    document.getElementById('infoTarifas').innerHTML = `Valores Unitarios para <b>${dep}</b>: 
+        Poste: <span>S/. ${t.poste.toFixed(2)}</span> | 
+        Cable (ml): <span>S/. ${t.cable.toFixed(3)}</span> | 
+        Retenida: <span>S/. ${t.retenida.toFixed(2)}</span> | 
+        Pozo a Tierra: <span>S/. ${t.pozo.toFixed(2)}</span>`;
+}
+
+window.onload = actualizarInfoTarifas;
+
+function calcularLiquidacion() {
+    const dep = document.getElementById('departamento').value;
+    const t = tarifas[dep];
+
+    const postes = parseFloat(document.getElementById('postes').value) || 0;
+    const cableado = parseFloat(document.getElementById('cableado').value) || 0;
+    const retenida = parseFloat(document.getElementById('retenida').value) || 0;
+    const pozos = parseFloat(document.getElementById('pozos').value) || 0;
+    const montoNegociado = document.getElementById('montoNegociado').value;
+    const propietario = document.getElementById('propietario').value.trim();
+
+    const subPostes = postes * t.poste;
+    const subCableado = cableado * t.cable;
+    const subRetenida = retenida * t.retenida;
+    const subPozos = pozos * t.pozo;
+
+    let totalTeorico = subPostes + subCableado + subRetenida + subPozos;
+    let aplicaMinimo = "No requerido";
+
+    if (totalTeorico > 0 && totalTeorico < 200) {
+        totalTeorico = 200;
+        aplicaMinimo = "Sí (Mínimo de S/. 200.00 aplicado)";
+    }
+
+    let montoFinal = totalTeorico;
+    if (montoNegociado !== "") {
+        montoFinal = parseFloat(montoNegociado) || totalTeorico;
+        aplicaMinimo = "Acuerdo Negociado";
+    }
+
+    document.getElementById('resTitulo').innerText = propietario ? `Liquidación para: ${propietario}` : "Resultado de Liquidación";
+    document.getElementById('resPostes').innerText = subPostes.toFixed(3);
+    document.getElementById('resCableado').innerText = subCableado.toFixed(3);
+    document.getElementById('resRetenida').innerText = subRetenida.toFixed(3);
+    document.getElementById('resPozos').innerText = subPozos.toFixed(3);
+    document.getElementById('resTotalTeorico').innerText = (subPostes + subCableado + subRetenida + subPozos).toFixed(3);
+    document.getElementById('resMinimoAplicado').innerText = aplicaMinimo;
+    document.getElementById('resFinal').innerText = montoFinal.toFixed(3);
+
+    document.getElementById('resultado').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
