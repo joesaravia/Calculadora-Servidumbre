@@ -116,6 +116,10 @@
         </div>
 
         <div class="section-title no-print">Datos de Negociación y Predio</div>
+        <div class="form-group no-print">
+            <label for="nombreEnlace">Nombre de Enlace:</label>
+            <input type="text" id="nombreEnlace" placeholder="Ej. Enlace FO Cusco - Sector Norte">
+        </div>
         <div class="grid-2 no-print">
             <div class="form-group">
                 <label for="montoNegociado">Monto Negociado (Opcional S/.):</label>
@@ -131,6 +135,7 @@
 
         <div class="result" id="resultado" style="display:none;">
             <h3 id="resTitulo">Resultado de Liquidación</h3>
+            <p><span>Nombre de Enlace:</span> <span id="resEnlace" style="font-weight: 600;">-</span></p>
             <p><span>Departamento Seleccionado:</span> <span id="resDep" style="font-weight: 600;">-</span></p>
             <p><span>Costo Postes:</span> <span>S/. <span id="resPostes">0.00</span></span></p>
             <p><span>Costo Cableado:</span> <span>S/. <span id="resCableado">0.00</span></span></p>
@@ -200,6 +205,7 @@ function calcularLiquidacion() {
     const cableado = parseFloat(document.getElementById('cableado').value) || 0;
     const retenida = parseFloat(document.getElementById('retenida').value) || 0;
     const pozos = parseFloat(document.getElementById('pozos').value) || 0;
+    const nombreEnlace = document.getElementById('nombreEnlace').value.trim();
     const montoNegociado = document.getElementById('montoNegociado').value;
     const propietario = document.getElementById('propietario').value.trim();
 
@@ -223,6 +229,7 @@ function calcularLiquidacion() {
     }
 
     document.getElementById('resTitulo').innerText = propietario ? `Liquidación de Servidumbre - Propietario: ${propietario}` : "Resultado de Liquidación";
+    document.getElementById('resEnlace').innerText = nombreEnlace !== "" ? nombreEnlace : "No especificado";
     document.getElementById('resDep').innerText = dep;
     document.getElementById('resPostes').innerText = formatoMoneda(subPostes);
     document.getElementById('resCableado').innerText = formatoMoneda(subCableado);
