@@ -21,8 +21,13 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .tarifa-box { background: #e8f4fd; border: 1px solid #b8daff; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; color: #004085; }
         .tarifa-box span { font-weight: bold; }
+        
         button { background-color: #0056b3; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: background 0.2s; }
         button:hover { background-color: #004085; }
+        
+        .btn-print { background-color: #28a745; margin-top: 15px; }
+        .btn-print:hover { background-color: #218838; }
+
         .result { margin-top: 25px; background: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; }
         .result h3 { margin: 0 0 15px 0; color: #333; font-size: 18px; border-bottom: 1px solid #ddd; padding-bottom: 8px; }
         .result p { margin: 8px 0; font-size: 15px; display: flex; justify-content: space-between; }
@@ -32,6 +37,14 @@
             .header { flex-direction: column; gap: 10px; text-align: center; }
             .header h2 { font-size: 18px; }
         }
+
+        /* Estilos específicos para cuando se imprima o guarde como PDF */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
+            .no-print { display: none !important; }
+            .result { border: 1px solid #000; background: #fff !important; }
+        }
     </style>
 </head>
 <body>
@@ -39,13 +52,12 @@
 <div class="container">
     <!-- Cabecera con Título y Logo -->
     <div class="header">
-        <div style="width: 60px; display: none;"></div> <!-- Spacer para balancear flex en desktop -->
         <h2>Calculadora de Pago de Servidumbre</h2>
         <img src="logo.png" alt="Logo Entel Permisos Pext" onerror="this.style.display='none'">
     </div>
 
     <div class="content-body">
-        <div class="form-group">
+        <div class="form-group no-print">
             <label for="departamento">Seleccione el Departamento (Cuadro Estadístico):</label>
             <select id="departamento" onchange="actualizarInfoTarifas()">
                 <option value="Pasco">Pasco</option>
@@ -76,12 +88,12 @@
             </select>
         </div>
 
-        <div class="tarifa-box" id="infoTarifas">
+        <div class="tarifa-box no-print" id="infoTarifas">
             <!-- Se llena dinámicamente -->
         </div>
 
-        <div class="section-title">Metrados / Afectación en el Predio</div>
-        <div class="grid-2">
+        <div class="section-title no-print">Metrados / Afectación en el Predio</div>
+        <div class="grid-2 no-print">
             <div class="form-group">
                 <label for="postes">Cantidad de Postes:</label>
                 <input type="number" id="postes" value="0" min="0">
@@ -92,7 +104,7 @@
             </div>
         </div>
 
-        <div class="grid-2">
+        <div class="grid-2 no-print">
             <div class="form-group">
                 <label for="retenida">Anclas o Retenidas:</label>
                 <input type="number" id="retenida" value="0" min="0">
@@ -103,8 +115,8 @@
             </div>
         </div>
 
-        <div class="section-title">Datos de Negociación y Predio</div>
-        <div class="grid-2">
+        <div class="section-title no-print">Datos de Negociación y Predio</div>
+        <div class="grid-2 no-print">
             <div class="form-group">
                 <label for="montoNegociado">Monto Negociado (Opcional S/.):</label>
                 <input type="number" id="montoNegociado" placeholder="Dejar vacío si aplica cálculo teórico" step="0.01">
@@ -115,10 +127,11 @@
             </div>
         </div>
 
-        <button onclick="calcularLiquidacion()">Calcular Valorización de Servidumbre</button>
+        <button class="no-print" onclick="calcularLiquidacion()">Calcular Valorización de Servidumbre</button>
 
         <div class="result" id="resultado" style="display:none;">
             <h3 id="resTitulo">Resultado de Liquidación</h3>
+            <p><span>Departamento Seleccionado:</span> <span id="resDep" style="font-weight: 600;">-</span></p>
             <p><span>Costo Postes:</span> <span>S/. <span id="resPostes">0.00</span></span></p>
             <p><span>Costo Cableado:</span> <span>S/. <span id="resCableado">0.00</span></span></p>
             <p><span>Costo Retenidas:</span> <span>S/. <span id="resRetenida">0.00</span></span></p>
@@ -126,6 +139,9 @@
             <p><span>Total Teórico Calculado:</span> <span>S/. <span id="resTotalTeorico">0.00</span></span></p>
             <p><span>Aplicación de Mínimo Legal (S/. 200):</span> <span id="resMinimoAplicado">No requerido</span></p>
             <p class="total-row"><span>Monto Final a Pagar:</span> <span>S/. <span id="resFinal">0.00</span></span></p>
+
+            <!-- Botón de impresión dentro del resultado -->
+            <button class="btn-print" onclick="window.print()">🖨️ Descargar / Imprimir Versión en PDF</button>
         </div>
     </div>
 </div>
@@ -149,6 +165,7 @@ const tarifas = {
     "Apurimac": { poste: 200, cable: 2.624, retenida: 48.63, pozo: 100 },
     "Lima": { poste: 400, cable: 0.50, retenida: 13.75, pozo: 100 },
     "Callao": { poste: 400, cable: 0.50, retenida: 60.00, pozo: 100 },
+    "Ancash": {fte: 300, cable: 2.952, retenida: 23.08, pozo: 100 }, // corregido abajo
     "Ancash": { poste: 300, cable: 2.952, retenida: 23.08, pozo: 100 },
     "Arequipa": { poste: 400, cable: 1.50, retenida: 55.00, pozo: 100 },
     "Ica": { poste: 300, cable: 3.365, retenida: 28.13, pozo: 100 },
@@ -201,7 +218,8 @@ function calcularLiquidacion() {
         aplicaMinimo = "Acuerdo Negociado";
     }
 
-    document.getElementById('resTitulo').innerText = propietario ? `Liquidación para: ${propietario}` : "Resultado de Liquidación";
+    document.getElementById('resTitulo').innerText = propietario ? `Liquidación de Servidumbre - Propietario: ${propietario}` : "Resultado de Liquidación";
+    document.getElementById('resDep').innerText = dep;
     document.getElementById('resPostes').innerText = subPostes.toFixed(3);
     document.getElementById('resCableado').innerText = subCableado.toFixed(3);
     document.getElementById('resRetenida').innerText = subRetenida.toFixed(3);
